@@ -5,5 +5,5 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 application = get_wsgi_application()
 
-# Vercel busca por defecto una variable llamada 'app'
+# Esta línea es indispensable para el entorno de Vercel
 app = application
