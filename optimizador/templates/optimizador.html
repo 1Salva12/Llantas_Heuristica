@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Optimizador de Llantas A*</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #e0e0e0; margin: 40px; }
+        h1, h2 { color: #ffffff; }
+        table { border-collapse: collapse; margin-bottom: 20px; background-color: #1e1e1e; width: 100%; max-width: 800px; }
+        th, td { border: 1px solid #333; padding: 12px; text-align: center; }
+        th { background-color: #252526; color: #00adb5; }
+        input[type="number"] { background-color: #2d2d2d; color: #fff; border: 1px solid #555; padding: 6px; width: 90px; text-align: center; border-radius: 4px; }
+        input[type="number"]:focus { border-color: #00adb5; outline: none; }
+        button { background-color: #00adb5; color: white; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 4px; transition: background 0.3s; }
+        button:hover { background-color: #008087; }
+        .resultado-box { background-color: #1e1e1e; border-left: 4px solid #00adb5; padding: 20px; margin-top: 25px; max-width: 760px; border-radius: 0 4px 4px 0; }
+        .res-item { margin: 10px 0; font-size: 1.1em; }
+        .total { font-weight: bold; color: #00adb5; font-size: 1.4em; }
+    </style>
+</head>
+<body>
+
+    <h1>Asignación Óptima de Llantas (Algoritmo A*)</h1>
+    <p>Introduce los costos en dólares para cada proveedor y tipo de rueda:</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Empresa / Distribuidor</th>
+                    {% for rueda in ruedas %}
+                        <th>{{ rueda }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for empresa in empresas %}
+                    <tr>
+                        <td><strong>{{ empresa }}</strong></td>
+                        {% for rueda in ruedas %}
+                            <td>
+                                <input type="number" name="{{ empresa }}_{{ rueda }}" min="0" step="any" value="0" required>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="submit">Calcular Solución Óptima</button>
+    </form>
+
+    {% if resultado %}
+        <div class="resultado-box">
+            <h2>¡Asignación Óptima Encontrada!</h2>
+            {% for item in resultado %}
+                <div class="res-item">
+                    • <strong>{{ item.rueda }}</strong> asignada a <span style="color:#ffffff;">{{ item.empresa }}</span> — <span style="color:#00adb5; font-weight: bold;">${{ item.precio }}</span>
+                </div>
+            {% endfor %}
+            <hr style="border-color: #333; margin: 15px 0;">
+            <div class="total">Costo Mínimo Total g(n): ${{ costo_total }}</div>
+        </div>
+    {% endif %}
+
+</body>
+</html>
