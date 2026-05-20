@@ -2,15 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "Llantas_Heuristica/wsgi.py",
+      "src": "config/wsgi.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.11" }
+      "config": { "runtime": "python3.12" }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "Llantas_Heuristica/wsgi.py"
+      "dest": "config/wsgi.py"
     }
   ]
 }
