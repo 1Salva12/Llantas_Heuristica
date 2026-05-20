@@ -3,5 +3,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('optimizador/', include('optimizador.urls')),
+    path('', include('optimizador.urls')),  # Apunta directo a las urls de la app
 ]

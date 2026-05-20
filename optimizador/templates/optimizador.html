@@ -2,67 +2,340 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Optimizador de Llantas A*</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizador de Llantas Inteligente (A*)</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: #e0e0e0; margin: 40px; }
-        h1, h2 { color: #ffffff; }
-        table { border-collapse: collapse; margin-bottom: 20px; background-color: #1e1e1e; width: 100%; max-width: 800px; }
-        th, td { border: 1px solid #333; padding: 12px; text-align: center; }
-        th { background-color: #252526; color: #00adb5; }
-        input[type="number"] { background-color: #2d2d2d; color: #fff; border: 1px solid #555; padding: 6px; width: 90px; text-align: center; border-radius: 4px; }
-        input[type="number"]:focus { border-color: #00adb5; outline: none; }
-        button { background-color: #00adb5; color: white; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 4px; transition: background 0.3s; }
-        button:hover { background-color: #008087; }
-        .resultado-box { background-color: #1e1e1e; border-left: 4px solid #00adb5; padding: 20px; margin-top: 25px; max-width: 760px; border-radius: 0 4px 4px 0; }
-        .res-item { margin: 10px 0; font-size: 1.1em; }
-        .total { font-weight: bold; color: #00adb5; font-size: 1.4em; }
+        /* Variables de Paleta de Colores Minimalista Oscura */
+        :root {
+            --bg-principal: #0d0e12;
+            --bg-tarjeta: rgba(30, 31, 41, 0.7);
+            --borde-glass: rgba(255, 255, 255, 0.08);
+            --cyan-neon: #00adb5;
+            --cyan-hover: #008087;
+            --texto-claro: #f1f1f4;
+            --texto-mutado: #a0a5b5;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg-principal);
+            color: var(--texto-claro);
+            margin: 0;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            border-bottom: 1px solid var(--borde-glass);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--cyan-neon);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Contenedor en dos columnas */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Estilos de Tarjetas Estilo Glassmorphism */
+        .tarjeta {
+            background: var(--bg-tarjeta);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--borde-glass);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-bottom: 25px;
+        }
+
+        /* Inputs de Cantidades */
+        .grid-cantidades {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .input-control {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--borde-glass);
+        }
+
+        .input-control label {
+            font-size: 0.85rem;
+            color: var(--texto-mutated);
+            margin-bottom: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .input-control input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 1.3rem;
+            text-align: center;
+            font-weight: 600;
+            width: 100%;
+            outline: none;
+        }
+
+        /* Remover flechas por defecto en inputs de número */
+        .input-control input::-webkit-outer-spin-button,
+        .input-control input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Botón de Envío */
+        .btn-calcular {
+            background-color: var(--cyan-neon);
+            color: #ffffff;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn-calcular:hover {
+            background-color: var(--cyan-hover);
+        }
+
+        .btn-calcular:active {
+            transform: scale(0.99);
+        }
+
+        /* Tabla de Precios Unitarios */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--borde-glass);
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--texto-claro);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        th:first-child { border-top-left-radius: 6px; }
+        th:last-child { border-top-right-radius: 6px; }
+
+        td {
+            font-size: 0.95rem;
+            color: var(--texto-claro);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Sección de Resultados */
+        .resultado-vacio {
+            color: var(--texto-mutado);
+            text-align: center;
+            padding: 40px 0;
+            font-style: italic;
+        }
+
+        .res-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--borde-glass);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .res-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .res-titulo {
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
+        .res-subtitulo {
+            font-size: 0.85rem;
+            color: var(--texto-mutado);
+        }
+
+        .res-costo {
+            color: var(--cyan-neon);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .linea-division {
+            border: 0;
+            height: 1px;
+            background: var(--borde-glass);
+            margin: 20px 0;
+        }
+
+        .total-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 173, 181, 0.1);
+            border: 1px solid rgba(0, 173, 181, 0.3);
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+
+        .total-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .total-monto {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--cyan-neon);
+        }
     </style>
 </head>
 <body>
 
-    <h1>Asignación Óptima de Llantas (Algoritmo A*)</h1>
-    <p>Introduce los costos en dólares para cada proveedor y tipo de rueda:</p>
+    <h1>Optimizador de Llantas Dinámico (Algoritmo A*)</h1>
 
-    <form method="POST">
-        {% csrf_token %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Empresa / Distribuidor</th>
-                    {% for rueda in ruedas %}
-                        <th>{{ rueda }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for empresa in empresas %}
-                    <tr>
-                        <td><strong>{{ empresa }}</strong></td>
-                        {% for rueda in ruedas %}
-                            <td>
-                                <input type="number" name="{{ empresa }}_{{ rueda }}" min="0" step="any" value="0" required>
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="dashboard-container">
         
-        <button type="submit">Calcular Solución Óptima</button>
-    </form>
-
-    {% if resultado %}
-        <div class="resultado-box">
-            <h2>¡Asignación Óptima Encontrada!</h2>
-            {% for item in resultado %}
-                <div class="res-item">
-                    • <strong>{{ item.rueda }}</strong> asignada a <span style="color:#ffffff;">{{ item.empresa }}</span> — <span style="color:#00adb5; font-weight: bold;">${{ item.precio }}</span>
+        <div class="columna-izquierda">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="tarjeta">
+                    <h2>1. Configuración del Pedido</h2>
+                    <p style="color: var(--texto-mutado); font-size: 0.9rem; margin-bottom: 15px;">
+                        Modifica el número de piezas por tipo de rueda que deseas procesar matemáticamente:
+                    </p>
+                    
+                    <div class="grid-cantidades">
+                        {% for rueda in ruedas %}
+                            <div class="input-control">
+                                <label for="cant_{{ rueda }}">{{ rueda }}</label>
+                                <input type="number" id="cant_{{ rueda }}" name="cant_{{ rueda }}" min="0" 
+                                       value="{% if rueda == 'Tipo T' %}{{ cantidades.Tipo_T }}{% elif rueda == 'Tipo H' %}{{ cantidades.Tipo_H }}{% elif rueda == 'Tipo V' %}{{ cantidades.Tipo_V }}{% else %}{{ cantidades.Tipo_W }}{% endif %}" required>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="submit" class="btn-calcular">Calcular Solución Óptima (g(n) + h(n))</button>
                 </div>
-            {% endfor %}
-            <hr style="border-color: #333; margin: 15px 0;">
-            <div class="total">Costo Mínimo Total g(n): ${{ costo_total }}</div>
+            </form>
+
+            <div class="tarjeta">
+                <h2>2. Precios Unitarios de Referencia</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Empresa</th>
+                            {% for rueda in ruedas %}
+                                <th>{{ rueda }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empresa in empresas %}
+                            <tr>
+                                <td><strong>{{ empresa }}</strong></td>
+                                {% if empresa == 'Empresa1' %}
+                                    <td>$20</td><td>$30</td><td>$20</td><td>$40</td>
+                                {% elif empresa == 'Empresa2' %}
+                                    <td>$50</td><td>$50</td><td>$40</td><td>$50</td>
+                                {% elif empresa == 'Empresa3' %}
+                                    <td>$60</td><td>$55</td><td>$50</td><td>$60</td>
+                                {% elif empresa == 'Empresa4' %}
+                                    <td>$100</td><td>$80</td><td>$60</td><td>$70</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    {% endif %}
+
+        <div class="columna-derecha">
+            <div class="tarjeta" style="min-height: 400px;">
+                <h2>3. Solución de Compra Óptima Calculada</h2>
+                <div class="linea-division"></div>
+
+                {% if resultado %}
+                    <div class="lista-resultados">
+                        {% for item in resultado %}
+                            <div class="res-item">
+                                <div class="res-info">
+                                    <span class="res-titulo">{{ item.rueda }} &rarr; {{ item.empresa }}</span>
+                                    <span class="res-subtitulo">Cantidad pedida: {{ item.cantidad }} pzas &times; ${{ item.precio_unitario }} (unitario)</span>
+                                </div>
+                                <div class="res-costo">
+                                    ${{ item.subtotal }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="linea-division"></div>
+
+                    <div class="total-container">
+                        <span class="total-label">Total g(n) (Costo Real):</span>
+                        <span class="total-monto">${{ costo_total }} dólares</span>
+                    </div>
+                {% else %}
+                    <div class="resultado-vacio">
+                        Introduce cantidades mayores a 0 en la configuración de la izquierda y haz clic en calcular para ver la solución del árbol de decisiones.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
 
 </body>
 </html>

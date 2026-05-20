@@ -1,7 +1,6 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('optimizador.urls')),  # <-- Quitamos 'optimizador/' y dejamos ''
+    path('', views.optimizar_llantas, name='optimizar_llantas'),
 ]
