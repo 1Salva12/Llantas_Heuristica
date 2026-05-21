@@ -5,56 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Optimizador de Llantas Inteligente</title>
     <style>
-        /* Nueva Paleta de Colores: Tech-Minimalist Neo-Brutalist */
+        /* Variables de Paleta de Colores Minimalista Oscura */
         :root {
-            --bg-principal: #f3f4f6;          /* Gris claro tecnológico */
-            --bg-tarjeta: #ffffff;
-            --borde-duro: #1e293b;            /* Bordes oscuros y definidos */
-            --color-primario: #6366f1;        /* Púrpura/Índigo eléctrico */
-            --color-primario-hover: #4f46e5;
-            --color-acento: #e0e7ff;          /* Fondo suave para destacar */
-            --texto-principal: #0f172a;
-            --texto-mutado: #475569;
-            --sombrado-solido: 4px 4px 0px 0px #1e293b; /* Sombra sólida, no difuminada */
+            --bg-principal: #0d0e12;
+            --bg-tarjeta: rgba(30, 31, 41, 0.7);
+            --borde-glass: rgba(255, 255, 255, 0.08);
+            --cyan-neon: #00adb5;
+            --cyan-hover: #008087;
+            --texto-claro: #f1f1f4;
+            --texto-mutado: #a0a5b5;
         }
 
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             background-color: var(--bg-principal);
-            color: var(--texto-principal);
+            color: var(--texto-claro);
             margin: 0;
-            padding: 40px 24px;
+            padding: 24px;
             box-sizing: border-box;
-            letter-spacing: -0.01em;
+        }
+
+        h1, h2 {
+            margin: 0 0 10px 0;
+            font-weight: 600;
         }
 
         h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: var(--texto-principal);
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: -0.03em;
-            border-bottom: 3px solid var(--borde-duro);
-            padding-bottom: 10px;
-            display: inline-block;
+            font-size: 1.8rem;
+            border-bottom: 1px solid var(--borde-glass);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            color: #ffffff;
         }
 
         h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--texto-principal);
+            font-size: 1.2rem;
+            color: var(--cyan-neon);
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
         }
 
         /* Contenedor en dos columnas */
         .dashboard-container {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
-            gap: 30px;
+            gap: 25px;
             align-items: start;
         }
 
@@ -64,164 +60,133 @@
             }
         }
 
-        /* Tarjetas con Bordes Definidos y Sombra Sólida */
+        /* Estilos de Tarjetas Estilo Glassmorphism */
         .tarjeta {
             background: var(--bg-tarjeta);
-            border: 2.5px solid var(--borde-duro);
-            border-radius: 4px; /* Esquinas más rectas y agresivas */
-            padding: 28px;
-            box-shadow: var(--sombrado-solido);
-            margin-bottom: 35px;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .tarjeta:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px 0px #1e293b;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--borde-glass);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-bottom: 25px;
         }
 
         /* Inputs de Cantidades */
         .grid-cantidades {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin: 24px 0;
+            gap: 15px;
+            margin: 20px 0;
         }
 
         .input-control {
             display: flex;
             flex-direction: column;
-            background: #ffffff;
+            background: rgba(0, 0, 0, 0.2);
             padding: 10px;
-            border-radius: 4px;
-            border: 2px solid var(--borde-duro);
-            transition: all 0.15s ease;
-        }
-
-        .input-control:focus-within {
-            background: var(--color-acento);
-            transform: translateY(-2px);
+            border-radius: 8px;
+            border: 1px solid var(--borde-glass);
         }
 
         .input-control label {
-            font-size: 0.75rem;
-            color: var(--texto-mutado);
-            margin-bottom: 4px;
+            font-size: 0.85rem;
+            color: var(--texto-mutated);
+            margin-bottom: 6px;
             text-align: center;
-            font-weight: 800;
-            text-transform: uppercase;
+            font-weight: bold;
         }
 
         .input-control input {
             background: transparent;
             border: none;
-            color: var(--texto-principal);
-            font-size: 1.5rem;
+            color: #ffffff;
+            font-size: 1.3rem;
             text-align: center;
-            font-weight: 800;
+            font-weight: 600;
             width: 100%;
             outline: none;
         }
 
-        /* Remover flechas por defecto en inputs */
+        /* Remover flechas por defecto en inputs de número */
         .input-control input::-webkit-outer-spin-button,
         .input-control input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        /* Botón Bloque Neo-Brutalista */
+        /* Botón de Envío */
         .btn-calcular {
-            background-color: var(--color-primario);
+            background-color: var(--cyan-neon);
             color: #ffffff;
-            border: 2.5px solid var(--borde-duro);
-            padding: 16px 20px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 4px;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 3px 3px 0px 0px var(--borde-duro);
-            transition: all 0.1s ease;
+            transition: background 0.2s ease, transform 0.1s ease;
         }
 
         .btn-calcular:hover {
-            background-color: var(--color-primario-hover);
-            transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px 0px var(--borde-duro);
+            background-color: var(--cyan-hover);
         }
 
         .btn-calcular:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px 0px var(--borde-duro);
+            transform: scale(0.99);
         }
 
-        /* NUEVO REDISEÑO DE TABLA: Estilo Matriz de Bloques */
+        /* Tabla de Precios Unitarios */
         table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 6px; /* Separa las celdas en bloques independientes */
+            border-spacing: 0;
             margin-top: 15px;
         }
 
         th, td {
-            padding: 12px;
+            padding: 12px 15px;
             text-align: center;
-            border-radius: 4px;
+            border-bottom: 1px solid var(--borde-glass);
         }
 
         th {
-            background-color: #f1f5f9;
-            color: var(--texto-principal);
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            border: 1.5px solid var(--borde-duro);
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--texto-claro);
+            font-weight: 600;
+            font-size: 0.9rem;
         }
+
+        th:first-child { border-top-left-radius: 6px; }
+        th:last-child { border-top-right-radius: 6px; }
 
         td {
             font-size: 0.95rem;
-            background-color: #ffffff;
-            border: 1.5px solid #cbd5e1;
-            font-weight: 500;
-            transition: all 0.15s ease;
+            color: var(--texto-claro);
         }
 
-        /* Resaltado de fila de Empresa al pasar el mouse */
         tr:hover td {
-            border-color: var(--borde-duro);
-            background-color: var(--color-acento);
-            font-weight: 700;
-        }
-
-        /* Estilo especial para la celda de nombre de la empresa */
-        td strong {
-            color: var(--color-primario);
-            font-weight: 700;
+            background-color: rgba(255, 255, 255, 0.02);
         }
 
         /* Sección de Resultados */
         .resultado-vacio {
             color: var(--texto-mutado);
             text-align: center;
-            padding: 60px 20px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            border: 2px dashed #cbd5e1;
-            border-radius: 4px;
+            padding: 40px 0;
+            font-style: italic;
         }
 
         .res-item {
-            background: #ffffff;
-            border: 2px solid var(--borde-duro);
-            border-radius: 4px;
-            padding: 16px;
-            margin-bottom: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--borde-glass);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 2px 2px 0px 0px var(--borde-duro);
         }
 
         .res-info {
@@ -231,7 +196,7 @@
         }
 
         .res-titulo {
-            font-weight: 700;
+            font-weight: bold;
             font-size: 1.05rem;
         }
 
@@ -241,43 +206,37 @@
         }
 
         .res-costo {
-            background: var(--color-acento);
-            padding: 6px 12px;
-            border: 1.5px solid var(--borde-duro);
-            border-radius: 4px;
-            font-weight: 800;
+            color: var(--cyan-neon);
+            font-weight: 600;
             font-size: 1.1rem;
         }
 
         .linea-division {
             border: 0;
-            height: 2px;
-            background: var(--borde-duro);
-            margin: 24px 0;
+            height: 1px;
+            background: var(--borde-glass);
+            margin: 20px 0;
         }
 
-        /* Total en Bloque de Alto Contraste */
         .total-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--borde-duro);
-            color: #ffffff;
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 3px 3px 0px 0px var(--color-primario);
+            background: rgba(0, 173, 181, 0.1);
+            border: 1px solid rgba(0, 173, 181, 0.3);
+            padding: 15px 20px;
+            border-radius: 8px;
         }
 
         .total-label {
-            font-size: 1.05rem;
-            font-weight: 700;
-            text-transform: uppercase;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .total-monto {
-            font-size: 1.7rem;
-            font-weight: 900;
-            color: #fca5a5; /* Color coral suave para destacar sobre el fondo oscuro */
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--cyan-neon);
         }
     </style>
 </head>
@@ -293,7 +252,7 @@
                 
                 <div class="tarjeta">
                     <h2>1. Configuración del Pedido</h2>
-                    <p style="color: var(--texto-mutado); font-size: 0.95rem; margin-bottom: 15px; line-height: 1.5;">
+                    <p style="color: var(--texto-mutado); font-size: 0.9rem; margin-bottom: 15px;">
                         Modifica el número de piezas por tipo de rueda que deseas procesar matemáticamente:
                     </p>
                     
